@@ -4,7 +4,9 @@
   "description": "pupitobot",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "main.js",
+    "deploy-commands": "deploy-commands.js"
   },
   "author": "EttinNitte",
   "license": "ISC",

@@ -13,15 +13,6 @@ for (const file of commandFiles) {
 	const command = require(filePath);
 	commands.push(command.data.toJSON());
 }
-
-const musicCommandsPath = path.join(__dirname, 'commands/music');
-const musicCommandFiles = fs.readdirSync(musicCommandsPath).filter(file => file.endsWith('.js'));
-for (const file of musicCommandFiles) {
-	const filePath = path.join(musicCommandsPath, file);
-	const command = require(filePath);
-	commands.push(command.data.toJSON());
-}
-
 const rest = new REST({ version: '9' }).setToken(token);
 rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
 	.then(() => console.log('Successfully registered application commands.'))
