@@ -9,10 +9,11 @@ module.exports = {
 	async execute(interaction) {
 		const cat = await utils.parseJson('https://api.thecatapi.com/v1/images/search');
 		const fact = await utils.parseJson('https://catfact.ninja/fact');
+		const desc = await utils.translate(fact.fact, 'es');
 		const embed = new EmbedBuilder()
 			.setColor('#804000')
 			.setTitle('Random cat')
-			.setDescription(`${fact.fact}`)
+			.setDescription(desc)
 			.setImage(cat[0].url);
 		await interaction.reply({ embeds: [embed] });
 	},

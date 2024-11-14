@@ -14,9 +14,9 @@ async function parseJson(url) {
 	return json;
 }
 module.exports = {
-	translate: async function(text) {
+	translate: async function(text, language) {
 		text = text.replaceAll(' ', '%20');
-		text = await parseJson(`https://api.mymemory.translated.net/get?q=${text}&langpair=en|es`);
+		text = await parseJson(`https://api.mymemory.translated.net/get?q=${text}&langpair=en|${language}`);
 		text = text.responseData.translatedText;
 		return text;
 	},

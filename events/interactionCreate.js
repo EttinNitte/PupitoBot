@@ -1,6 +1,8 @@
+const points = require('../utils/points.js');
 module.exports = {
 	name: 'interactionCreate',
-	execute(interaction) {
-		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
+	async execute(interaction) {
+		const p = await points.addPoint(1, interaction);
+		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction. and have: ${p} points`);
 	},
 };
