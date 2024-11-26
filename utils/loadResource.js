@@ -7,7 +7,14 @@ module.exports = {
 		for (const file of commandFiles) {
 			const filePath = path.join(commandsPath, file);
 			const command = require(filePath);
-			client.commands.set(command.data.name, command);
+			if (Array.isArray(command)) {
+				command.forEach(cmd => {
+					client.commands.set(cmd.data.name, cmd);
+				});
+			}
+			else {
+				client.commands.set(command.data.name, command);
+			}
 		}
 		return client;
 	},

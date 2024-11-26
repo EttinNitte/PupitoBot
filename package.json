@@ -5,14 +5,16 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "main.js",
-    "deploy-commands": "deploy-commands.js"
+    "start": "node main.js",
+    "deployc": "node deploy-commands.js"
   },
   "author": "EttinNitte",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.16.3",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "pdf-lib":"^1.17.1",
+    "axios": "1.7.8"
   },
   "devDependencies": {
     "eslint": "^8.15.0"
