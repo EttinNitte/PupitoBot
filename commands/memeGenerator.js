@@ -115,7 +115,6 @@ const meme1 = {
 		.setName('meme1')
 		.setDescription('Genera un meme usando una plantilla popular')
 		.addStringOption(option => {
-			// Define a string option for meme templates
 			option.setName('plantilla')
 				.setDescription('Seleccione una plantilla para el meme')
 				.setRequired(true);

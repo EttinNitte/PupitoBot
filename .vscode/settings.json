@@ -7,5 +7,10 @@
             "database": "${workspaceFolder:PupitoBot}/bot_database.db"
         }
     ],
-    "sqltools.useNodeRuntime": true
+    "sqltools.useNodeRuntime": true,
+    "cSpell.words": [
+        "imgflip",
+        "pbonk",
+        "Spongebob"
+    ]
 }
