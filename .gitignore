@@ -4,3 +4,4 @@ config.json
 bot_database.db
 db.js
 db.session.sql
+.vscode

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js');
 const utils = require('../utils/utils.js');
-
+const COLORS = require('../utils/colors.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pcat')
@@ -10,11 +10,18 @@ module.exports = {
 		const cat = await utils.parseJson('https://api.thecatapi.com/v1/images/search');
 		const fact = await utils.parseJson('https://catfact.ninja/fact');
 		const desc = await utils.translate(fact.fact, 'es');
-		const embed = new EmbedBuilder()
-			.setColor('#804000')
-			.setTitle('Random cat')
-			.setDescription(desc)
-			.setImage(cat[0].url);
-		await interaction.reply({ embeds: [embed] });
+		await interaction.deferReply();
+		try {
+			const embed = new EmbedBuilder()
+				.setColor(COLORS.YELLOW)
+				.setTitle('Random cat')
+				.setDescription(desc)
+				.setImage(cat[0].url);
+			await interaction.editReply({ embeds: [embed] });
+		}
+		catch (error) {
+			console.error(error);
+			await interaction.editReply('Ocurrió un error al ejecutar el comando');
+		}
 	},
 };
