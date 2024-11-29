@@ -18,6 +18,18 @@ module.exports = {
 		}
 		return client;
 	},
+	importMusicCommands: function(client) {
+		const musicCommandsPath = path.resolve('./commands/music');
+		const musicCommandFiles = fs.readdirSync(musicCommandsPath).filter(file => file.endsWith('.js'));
+		for (const file of musicCommandFiles) {
+			const musicFilePath = path.join(musicCommandsPath, file);
+			const musicCommand = require(musicFilePath);
+			// Set a new item in the Collection
+			// With the key as the command name and the value as the exported module
+			client.commands.set(musicCommand.data.name, musicCommand);
+		}
+		return client;
+	},
 	importEvents: function(client) {
 		const eventsPath = path.resolve('./events');
 		const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
