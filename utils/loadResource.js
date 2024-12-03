@@ -22,11 +22,16 @@ module.exports = {
 		const musicCommandsPath = path.resolve('./commands/music');
 		const musicCommandFiles = fs.readdirSync(musicCommandsPath).filter(file => file.endsWith('.js'));
 		for (const file of musicCommandFiles) {
-			const musicFilePath = path.join(musicCommandsPath, file);
-			const musicCommand = require(musicFilePath);
-			// Set a new item in the Collection
-			// With the key as the command name and the value as the exported module
-			client.commands.set(musicCommand.data.name, musicCommand);
+			const filePath = path.join(musicCommandsPath, file);
+			const command = require(filePath);
+			if (Array.isArray(command)) {
+				command.forEach(cmd => {
+					client.commands.set(cmd.data.name, cmd);
+				});
+			}
+			else {
+				client.commands.set(command.data.name, command);
+			}
 		}
 		return client;
 	},

@@ -112,7 +112,7 @@ const memeTemplates4 = [
 
 const meme1 = {
 	data: new SlashCommandBuilder()
-		.setName('meme1')
+		.setName('pmeme1')
 		.setDescription('Genera un meme usando una plantilla popular')
 		.addStringOption(option => {
 			option.setName('plantilla')
@@ -165,7 +165,7 @@ const meme1 = {
 };
 const meme2 = {
 	data: new SlashCommandBuilder()
-		.setName('meme2')
+		.setName('pmeme2')
 		.setDescription('Genera un meme usando una plantilla popular')
 		.addStringOption(option => {
 			// Define a string option for meme templates
@@ -218,7 +218,7 @@ const meme2 = {
 };
 const meme3 = {
 	data: new SlashCommandBuilder()
-		.setName('meme3')
+		.setName('pmeme3')
 		.setDescription('Genera un meme usando una plantilla popular')
 		.addStringOption(option => {
 			// Define a string option for meme templates
@@ -271,7 +271,7 @@ const meme3 = {
 };
 const meme4 = {
 	data: new SlashCommandBuilder()
-		.setName('meme4')
+		.setName('pmeme4')
 		.setDescription('Genera un meme usando una plantilla popular')
 		.addStringOption(option => {
 			// Define a string option for meme templates

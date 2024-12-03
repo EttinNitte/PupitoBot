@@ -23,7 +23,12 @@ const musicCommandFiles = fs.readdirSync(musicCommandsPath).filter(file => file.
 for (const file of musicCommandFiles) {
 	const filePath = path.join(musicCommandsPath, file);
 	const command = require(filePath);
-	commands.push(command.data.toJSON());
+	if (Array.isArray(command)) {
+		commands.push(...command.map(cmd => cmd.data.toJSON()));
+	}
+	else {
+		commands.push(command.data.toJSON());
+	}
 }
 const rest = new REST({ version: '9' }).setToken(token);
 rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
