@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const ytdl = require('@distube/ytdl-core');
 const ytsr = require('ytsr');
@@ -219,121 +218,6 @@ const listQueue = {
 		await interaction.editReply('Disconnected!');
 	},
 };*/
-const listPlaylist = {
-	data: new SlashCommandBuilder()
-		.setName('plists')
-		.setDescription('Lists all playlists with their creators.'),
-	async execute(interaction) {
-		try {
-			await interaction.deferReply();
-			const query = `
-                SELECT 
-                    P.id_playlist, 
-                    P.name AS playlist_name, 
-                    P.user_id,
-                    COUNT(PS.id_song) AS song_count
-                FROM 
-                    PLAYLIST P
-                LEFT JOIN 
-                    PLAYLIST_SONGS PS 
-                ON 
-                    P.id_playlist = PS.id_playlist
-                GROUP BY 
-                    P.id_playlist, P.name, P.user_id;
-            `;
-			db.all(query, [], async (err, rows) => {
-				if (err) {
-					console.error(err);
-					return interaction.editReply('An error occurred while fetching playlists.');
-				}
-
-				if (rows.length === 0) {
-					return interaction.editReply('No playlists found in the database.');
-				}
-				const playlistsPerPage = 20;
-				const totalPages = Math.ceil(rows.length / playlistsPerPage);
-				const generateEmbed = (page) => {
-					const start = (page - 1) * playlistsPerPage;
-					const end = start + playlistsPerPage;
-					const pagePlaylists = rows.slice(start, end);
-					const embed = new EmbedBuilder()
-						.setTitle(`Playlists (Page ${page} of ${totalPages})`)
-						.setColor(0x00AE86)
-						.setTimestamp()
-						.setFooter({ text: 'Playlist Bot', iconURL: interaction.client.user.avatarURL() });
-					pagePlaylists.forEach((row) => {
-						const creatorMention = `<@${row.user_id}>`;
-						embed.addFields({
-							name: '\n',
-							value: `${row.id_playlist}.- **Playlist**: ${row.playlist_name} (${row.song_count} songs)- **Creator:** ${creatorMention}`,
-							inline: false,
-						});
-					});
-					return embed;
-				};
-				const createPaginationButtons = (page) => {
-					const row = new ActionRowBuilder().addComponents(
-						new ButtonBuilder()
-							.setCustomId('prev')
-							.setLabel('◀️ Previous')
-							.setStyle(ButtonStyle.Primary)
-							.setDisabled(page === 1),
-						new ButtonBuilder()
-							.setCustomId('next')
-							.setLabel('▶️ Next')
-							.setStyle(ButtonStyle.Primary)
-							.setDisabled(page === totalPages),
-					);
-					return row;
-				};
-				let currentPage = 1;
-				const embed = generateEmbed(currentPage);
-				const buttons = createPaginationButtons(currentPage);
-				const message = await interaction.editReply({
-					embeds: [embed],
-					components: rows.length > playlistsPerPage ? [buttons] : [],
-				});
-				const collector = message.createMessageComponentCollector({
-					time: 60000,
-				});
-				collector.on('collect', async (btnInteraction) => {
-					if (btnInteraction.user.id !== interaction.user.id) {
-						return btnInteraction.reply({
-							content: 'You can t interact with this!',
-							ephemeral: true,
-						});
-					}
-					if (btnInteraction.customId === 'prev') {
-						currentPage -= 1;
-					}
-					else if (btnInteraction.customId === 'next') {
-						currentPage += 1;
-					}
-					const updatedEmbed = generateEmbed(currentPage);
-					const updatedButtons = createPaginationButtons(currentPage);
-					await btnInteraction.update({
-						embeds: [updatedEmbed],
-						components: [updatedButtons],
-					});
-				});
-				collector.on('end', async () => {
-					if (message.components.length != 0) {
-						const disabledButtons = createPaginationButtons(currentPage).components.map((button) =>
-							button.setDisabled(true),
-						);
-						await message.edit({
-							components: [new ActionRowBuilder().addComponents(disabledButtons)],
-						});
-					}
-				});
-			});
-		}
-		catch (error) {
-			console.error(error);
-			interaction.editReply('An error occurred while executing the command.');
-		}
-	},
-};
 async function getPlaylist(playlist, shuffle = true) {
 	return new Promise((resolve, reject) => {
 		const query = `
@@ -509,4 +393,4 @@ async function play(guild, song) {
 		console.log(error);
 	}
 }
-module.exports = [ playPlaylist, playQuery, shuffleSongs, skip, leave, pause, unpause, listQueue, listPlaylist];
+module.exports = [ playPlaylist, playQuery, shuffleSongs, skip, leave, pause, unpause, listQueue];
