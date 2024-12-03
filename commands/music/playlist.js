@@ -6,7 +6,7 @@ const utils = require('../../utils/utils.js');
 
 const listPlaylist = {
 	data: new SlashCommandBuilder()
-		.setName('plists')
+		.setName('lists')
 		.setDescription('Lists all playlists with their creators.'),
 	async execute(interaction) {
 		try {

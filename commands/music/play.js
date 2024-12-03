@@ -4,13 +4,14 @@ const ytdl = require('@distube/ytdl-core');
 const ytsr = require('ytsr');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./bot_database.db');
+const utils = require('../../utils/utils.js');
 
 const queue = new Map();
 let serverQueue = new Map();
 
 const playQuery = {
 	data: new SlashCommandBuilder()
-		.setName('pplay')
+		.setName('play')
 		.setDescription('Play a song in your channel!')
 		.addStringOption(option => option.setName('query').setDescription('The query to search for a video').setRequired(true)),
 	async execute(interaction) {
@@ -24,8 +25,8 @@ const playQuery = {
 };
 const playPlaylist = {
 	data: new SlashCommandBuilder()
-		.setName('pplaylist')
-		.setDescription('Play a song in your channel!')
+		.setName('playlist')
+		.setDescription('Play a playlist in your channel!')
 		.addStringOption(option => option.setName('playlist').setDescription('The Playlist you want to play').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
@@ -39,7 +40,7 @@ const playPlaylist = {
 };
 const shuffleSongs = {
 	data: new SlashCommandBuilder()
-		.setName('pshuffle')
+		.setName('shuffle')
 		.setDescription('shuffle the playlist'),
 	async execute(interaction) {
 		await interaction.deferReply();
@@ -76,7 +77,7 @@ const shuffleSongs = {
 };
 const skip = {
 	data: new SlashCommandBuilder()
-		.setName('pskip')
+		.setName('skip')
 		.setDescription('Skip to the next song in the queue'),
 	async execute(interaction) {
 		const guildId = interaction.guild.id;
@@ -99,8 +100,8 @@ const skip = {
 };
 const leave = {
 	data: new SlashCommandBuilder()
-		.setName('pleave')
-		.setDescription('Skip to the next song in the queue'),
+		.setName('leave')
+		.setDescription('Make the bot leave the voice channel and stop the music'),
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!serverQueue) {
@@ -116,7 +117,7 @@ const leave = {
 };
 const pause = {
 	data: new SlashCommandBuilder()
-		.setName('ppause')
+		.setName('pause')
 		.setDescription('Pauses the song in the queue'),
 	async execute(interaction) {
 		await interaction.deferReply();
@@ -135,7 +136,7 @@ const pause = {
 };
 const unpause = {
 	data: new SlashCommandBuilder()
-		.setName('punpause')
+		.setName('unpause')
 		.setDescription('Unpauses the song in the queue'),
 	async execute(interaction) {
 		await interaction.deferReply();
@@ -154,7 +155,7 @@ const unpause = {
 };
 const listQueue = {
 	data: new SlashCommandBuilder()
-		.setName('pqueue')
+		.setName('queue')
 		.setDescription('Shows the queue'),
 	async execute(interaction) {
 		await interaction.deferReply();
@@ -187,37 +188,59 @@ const listQueue = {
 		}
 	},
 };
-/* const jump = {
+const jump = {
 	data: new SlashCommandBuilder()
-		.setName('pjump')
-		.setDescription('Jump to song(name or queue place)')
-		.addStringOption(option => option.setName('jump').setDescription('The song you want to play').setRequired(true)),
+		.setName('jump')
+		.setDescription('Jump to song (queue position)')
+		.addStringOption(option => option.setName('jump').setDescription('number of the song to play in the query').setRequired(true)),
 	async execute(interaction) {
 		await interaction.deferReply();
-		const jump = interaction.options.getString('jump');
+		const jp = interaction.options.getString('jump');
 		const guildId = interaction.guild.id;
 		serverQueue = queue.get(guildId);
 		if (!serverQueue) {
-			return interaction.editReplyply('Not connected to any channel');
+			return interaction.editReply('Not connected to any channel');
 		}
 		const songs = serverQueue.songs;
-		console.log(songs);
-		let b = false;
-		let i = 0;
-		while (!b) {
-			console.log(songs[i].title);
-			if (songs[i].title === jump) {
-				b = true;
-			}
-			else {
-				serverQueue.songs.shift();
-				i++;
-			}
+		if (jp < 0 || jp >= songs.length) {
+			throw new Error('Invalid index: out of range');
 		}
-		console.log(serverQueue.songs);
-		await interaction.editReply('Disconnected!');
+		const [element] = songs.splice(jp, 1);
+		songs.splice(1, 0, element);
+		serverQueue.songs = songs;
+		const dispatcher = serverQueue.connection.state.subscription.player;
+		if (dispatcher) {
+			dispatcher.stop();
+		}
+		await interaction.editReply('✅ Success!');
 	},
-};*/
+};
+const random = {
+	data: new SlashCommandBuilder()
+		.setName('random')
+		.setDescription('Jump to random song'),
+	async execute(interaction) {
+		await interaction.deferReply();
+		const guildId = interaction.guild.id;
+		serverQueue = queue.get(guildId);
+		if (!serverQueue) {
+			return interaction.editReply('Not connected to any channel');
+		}
+		const songs = serverQueue.songs;
+		const num = await utils.randomInt(1, songs.length);
+		if (num < 0 || num >= songs.length) {
+			throw new Error('Invalid index: out of range');
+		}
+		const [element] = songs.splice(num, 1);
+		songs.splice(1, 0, element);
+		serverQueue.songs = songs;
+		const dispatcher = serverQueue.connection.state.subscription.player;
+		if (dispatcher) {
+			dispatcher.stop();
+		}
+		await interaction.editReply('✅ Success!');
+	},
+};
 async function getPlaylist(playlist, shuffle = true) {
 	return new Promise((resolve, reject) => {
 		const query = `
@@ -390,10 +413,15 @@ async function play(guild, song) {
 			console.error(error.message);
 			serverQueue.textChannel.send(`Error playing **${song.title}** Error: ${error.message}`);
 		});
-		serverQueue.textChannel.send(`Now playing: **${song.title}** (${serverQueue.songs.length} left)`);
+		if (serverQueue.songs.length == 1) {
+			serverQueue.textChannel.send(`Now playing: **${song.title}**`);
+		}
+		else {
+			serverQueue.textChannel.send(`Now playing: **${song.title}** (${serverQueue.songs.length} left)`);
+		}
 	}
 	catch (error) {
 		console.log(error);
 	}
 }
-module.exports = [ playPlaylist, playQuery, shuffleSongs, skip, leave, pause, unpause, listQueue];
+module.exports = [ playPlaylist, playQuery, shuffleSongs, skip, leave, pause, unpause, listQueue, jump, random];
