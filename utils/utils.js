@@ -31,4 +31,17 @@ module.exports = {
 		const json = await getJSONResponse(result.body);
 		return json;
 	},
+	validateRole: async function(requiredRole, interaction) {
+		const hasRole = interaction.member.roles.cache.some(role => role.name === requiredRole);
+		if (!hasRole) {
+			await interaction.reply({
+				content: 'You do not have the required role to execute this command.',
+				ephemeral: true,
+			});
+			return false;
+		}
+		else {
+			return true;
+		}
+	},
 };

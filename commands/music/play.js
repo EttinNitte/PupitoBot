@@ -344,8 +344,11 @@ async function playMusic(query, playlist, interaction) {
 					i = 0;
 				}
 			});
-			serverQueue.textChannel.send(data);
+			if (data != '') {
+				serverQueue.textChannel.send(data);
+			}
 		}
+		await interaction.editReply('✅ Success!');
 	}
 	catch (error) {
 		let string = error.message;
