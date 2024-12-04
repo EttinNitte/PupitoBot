@@ -17,18 +17,34 @@ module.exports = {
 			const imgTitle = await utils.translate(img.title, 'es');
 			const phase = data[0]?.Phase || 'Unknown';
 			const illumination = data[0]?.Illumination || 'Unknown';
-			const phaseTxt = await utils.translate(phase, 'es');
-			const illuminationTxt = await utils.translate(illumination.toString(), 'es');
+			const type = checkURLType(img.url);
+			const fieldsData = [
+				{ name: 'Fase Lunar', value: phase, inline: true },
+				{ name: 'Iluminación', value: illumination.toString(), inline: true },
+				{ name: 'Imagen del día', value: imgTitle[0], inline: false },
+			];
+			let url = null;
+			if (type == 'YouTube Video') {
+				fieldsData.push({ name: img.url, value: '\n', inline: false });
+			}
+			else if (type == 'Image URL') {
+				url = img.url;
+			}
+			const embedFields = [];
+			fieldsData.forEach(item => {
+				embedFields.push({
+					name: item.name,
+					value: item.value,
+					inline: item.inline,
+				});
+			});
 			const embed = new EmbedBuilder()
 				.setColor(COLORS.BLACK)
 				.setTitle('Nasa')
 				.setDescription('Información del día')
-				.setFields(
-					{ name: 'Fase Lunar', value: phaseTxt, inline: true },
-					{ name: 'Iluminación', value: illuminationTxt, inline: true },
-					{ name: 'Imagen del día', value: imgTitle, inline: false },
-				)
-				.setImage(img.url);
+				.setThumbnail('https://gpm.nasa.gov/sites/default/files/document_files/NASA-Logo-Large.png')
+				.setFields(embedFields)
+				.setImage(url);
 			await interaction.editReply({ embeds: [embed] });
 		}
 		catch (error) {
@@ -37,3 +53,16 @@ module.exports = {
 		}
 	},
 };
+function checkURLType(url) {
+	const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)\/(watch\?v=|embed\/)([a-zA-Z0-9_-]{11})(\S*)?$/;
+	const imageRegex = /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i;
+	if (youtubeRegex.test(url)) {
+		return 'YouTube Video';
+	}
+	else if (imageRegex.test(url)) {
+		return 'Image URL';
+	}
+	else {
+		return 'Unknown';
+	}
+}

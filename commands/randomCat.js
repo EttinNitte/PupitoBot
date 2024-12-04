@@ -15,7 +15,7 @@ module.exports = {
 			const embed = new EmbedBuilder()
 				.setColor(COLORS.YELLOW)
 				.setTitle('Random cat')
-				.setDescription(desc)
+				.setDescription(desc[0])
 				.setImage(cat[0].url);
 			await interaction.editReply({ embeds: [embed] });
 		}

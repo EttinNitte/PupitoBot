@@ -1,5 +1,4 @@
 const { request } = require('undici');
-
 async function getJSONResponse(body) {
 	let fullBody = '';
 
@@ -8,17 +7,22 @@ async function getJSONResponse(body) {
 	}
 	return JSON.parse(fullBody);
 }
-async function parseJson(url) {
-	const result = await request(url);
-	const json = await getJSONResponse(result.body);
-	return json;
-}
 module.exports = {
-	translate: async function(text, language) {
-		text = text.replaceAll(' ', '%20');
-		text = await parseJson(`https://api.mymemory.translated.net/get?q=${text}&langpair=en|${language}`);
-		text = text.responseData.translatedText;
-		return text;
+	translate: async function(txt, language) {
+		language;
+		if (Array.isArray(txt)) {
+			try {
+				const translatedArray = await translateTextArray(txt, language);
+				return translatedArray;
+			}
+			catch (err) {
+				console.error('Error translating array:', err);
+				return txt;
+			}
+		}
+		else {
+			return [ await translateText(txt, language) ];
+		}
 	},
 	randomInt: async function(min, max) {
 		return Math.floor(Math.random() * ((max + 1) - min)) + min;
@@ -45,3 +49,60 @@ module.exports = {
 		}
 	},
 };
+async function translateText(t, language) {
+	const res = await fetch('http://127.0.0.1:5000/translate', {
+		method: 'POST',
+		body: JSON.stringify({
+			q: t,
+			source: 'auto',
+			target: language,
+			format: 'text',
+			alternatives: 3,
+			api_key: '',
+		}),
+		headers: { 'Content-Type': 'application/json' },
+	});
+	const rawText = await res.text();
+	try {
+		const data = JSON.parse(rawText);
+		if (t === data.translatedText) {
+			return t;
+		}
+		return data.translatedText + '\n(' + (t + ')' || 'Translation failed' + ')');
+	}
+	catch (err) {
+		console.error('Failed to parse JSON:', err.message);
+		return t;
+	}
+}
+async function translateTextArray(txt, language) {
+	const translatedArray = await Promise.all(
+		txt.map(async (t) => {
+			const res = await fetch('http://127.0.0.1:5000/translate', {
+				method: 'POST',
+				body: JSON.stringify({
+					q: t,
+					source: 'auto',
+					target: language,
+					format: 'text',
+					alternatives: 3,
+					api_key: '',
+				}),
+				headers: { 'Content-Type': 'application/json' },
+			});
+			const rawText = await res.text();
+			try {
+				const data = JSON.parse(rawText);
+				if (t === data.translatedText) {
+					return t;
+				}
+				return data.translatedText + '\n(' + (t + ')' || 'Translation failed' + ')');
+			}
+			catch (err) {
+				console.error('Failed to parse JSON:', err.message);
+				return t;
+			}
+		}),
+	);
+	return translatedArray;
+}
