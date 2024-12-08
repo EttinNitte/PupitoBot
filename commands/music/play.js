@@ -382,7 +382,6 @@ async function playMusic(query, playlist, interaction) {
 		await interaction.editReply('There was an error trying to execute that command: ' + string);
 	}
 }
-
 async function play(guild, song) {
 	const sq = queue.get(guild.id);
 	try {

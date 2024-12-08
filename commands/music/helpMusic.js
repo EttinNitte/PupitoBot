@@ -7,20 +7,18 @@ module.exports = {
 		.setDescription('Displays a list of music-related commands dynamically'),
 	async execute(interaction) {
 		const musicCommands = interaction.client.commands.filter(command =>
-			command.data.description.toLowerCase().includes('music') ||
-            command.data.description.toLowerCase().includes('playlist') ||
-            command.data.description.toLowerCase().includes('song') ||
-            command.data.description.toLowerCase().includes('queue'),
+			command.data.description.toLowerCase().includes('music' || 'musica') ||
+            command.data.description.toLowerCase().includes('playlist' || 'lista de reproducicon') ||
+            command.data.description.toLowerCase().includes('song' || 'cancion') ||
+            command.data.description.toLowerCase().includes('queue' || 'cola'),
 		);
 		if (musicCommands.size === 0) {
 			return interaction.reply({ content: 'No music-related commands found!', ephemeral: true });
 		}
-
-		// Create the embed
 		const embed = new EmbedBuilder()
 			.setColor(0x1DB954)
 			.setTitle('🎵 Music Commands')
-			.setDescription('Here are all the music-related commands available:')
+			.setDescription('Aqui todos los comandos disponibles para musica:')
 			.setFooter({ text: 'Use these commands to control Pupito bot!' });
 		musicCommands.forEach(command => {
 			embed.addFields({

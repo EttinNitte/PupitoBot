@@ -15,7 +15,9 @@ async function loadCommands() {
 		if (Array.isArray(command)) {
 			const translatedCommands = await Promise.all(
 				command.map(async cmd => {
-					const txt = await utils.translate(cmd.data.description, 'es');
+					let txt = await utils.translate(cmd.data.description, 'es');
+					txt = txt[0].split('\n');
+					console.log(txt[0]);
 					cmd.data.setDescription(txt[0]);
 					return cmd.data.toJSON();
 				}),
@@ -23,7 +25,9 @@ async function loadCommands() {
 			commands.push(...translatedCommands);
 		}
 		else {
-			const txt = await utils.translate(command.data.description, 'es');
+			let txt = await utils.translate(command.data.description, 'es');
+			txt = txt[0].split('\n');
+			console.log(txt[0]);
 			command.data.setDescription(txt[0]);
 			commands.push(command.data.toJSON());
 		}
@@ -36,7 +40,9 @@ async function loadCommands() {
 		if (Array.isArray(command)) {
 			const translatedCommands = await Promise.all(
 				command.map(async cmd => {
-					const txt = await utils.translate(cmd.data.description, 'es');
+					let txt = await utils.translate(cmd.data.description, 'es');
+					txt = txt[0].split('\n');
+					console.log(txt[0]);
 					cmd.data.setDescription(txt[0]);
 					return cmd.data.toJSON();
 				}),
@@ -44,7 +50,9 @@ async function loadCommands() {
 			commands.push(...translatedCommands);
 		}
 		else {
-			const txt = await utils.translate(command.data.description, 'es');
+			let txt = await utils.translate(command.data.description, 'es');
+			txt = txt[0].split('\n');
+			console.log(txt[0]);
 			command.data.setDescription(txt[0]);
 			commands.push(command.data.toJSON());
 		}
