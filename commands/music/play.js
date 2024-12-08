@@ -84,7 +84,7 @@ const skip = {
 		const sq = queue.get(guildId);
 		await interaction.deferReply();
 		if (!serverQueue) {
-			return interaction.editReplyply('There is no song playing currently!');
+			return interaction.editReply('There is no song playing currently!');
 		}
 		const dispatcher = serverQueue.connection.state.subscription.player;
 		if (dispatcher) {
@@ -105,7 +105,7 @@ const leave = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		if (!serverQueue) {
-			return interaction.editReplyply('Not connected to any channel');
+			return interaction.editReply('Not connected to any channel');
 		}
 		const guildId = interaction.guild.id;
 		serverQueue.connection.destroy();

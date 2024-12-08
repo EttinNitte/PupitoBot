@@ -43,7 +43,7 @@ module.exports = {
 			await interaction.reply('Opción "Modifier" no es un modificador valido');
 		}
 		else if (subtract && !isPositiveInteger(subtract)) {
-			await interaction.reply('Opción "Substract" no es un número');
+			await interaction.reply('Opción "Subtract" no es un número');
 		}
 		else {
 			try {

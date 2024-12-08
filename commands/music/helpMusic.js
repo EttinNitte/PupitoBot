@@ -8,8 +8,8 @@ module.exports = {
 	async execute(interaction) {
 		const musicCommands = interaction.client.commands.filter(command =>
 			command.data.description.toLowerCase().includes('music' || 'musica') ||
-            command.data.description.toLowerCase().includes('playlist' || 'lista de reproducicon') ||
-            command.data.description.toLowerCase().includes('song' || 'cancion') ||
+            command.data.description.toLowerCase().includes('playlist' || 'lista de reproducción') ||
+            command.data.description.toLowerCase().includes('song' || 'canción') ||
             command.data.description.toLowerCase().includes('queue' || 'cola'),
 		);
 		if (musicCommands.size === 0) {
