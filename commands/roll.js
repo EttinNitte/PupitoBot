@@ -4,7 +4,7 @@ const utils = require('../utils/utils.js');
 const COLORS = require('../utils/colors.js');
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('proll')
+		.setName('roll')
 		.setDescription('Rolls a dice')
 		.addStringOption(option => option
 			.setName('dice')

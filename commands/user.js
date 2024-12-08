@@ -4,7 +4,7 @@ const points = require('../utils/points.js');
 const COLORS = require('../utils/colors.js');
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('puser')
+		.setName('user')
 		.setDescription('Replies with user info'),
 	async execute(interaction) {
 		try {

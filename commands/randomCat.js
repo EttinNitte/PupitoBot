@@ -4,7 +4,7 @@ const utils = require('../utils/utils.js');
 const COLORS = require('../utils/colors.js');
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('pcat')
+		.setName('cat')
 		.setDescription('Sends a random cat'),
 	async execute(interaction) {
 		const cat = await utils.parseJson('https://api.thecatapi.com/v1/images/search');

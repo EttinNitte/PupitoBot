@@ -7,7 +7,7 @@ const COLORS = require('../utils/colors.js');
 const regiones = [['LAS', 'la2'], ['LAN', 'la1'], ['NA', 'na']];
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('plol')
+		.setName('lol')
 		.setDescription('Info cuenta')
 		.addStringOption(option => {
 			option.setName('region')

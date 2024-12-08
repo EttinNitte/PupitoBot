@@ -5,7 +5,7 @@ const utils = require('../utils/utils.js');
 const COLORS = require('../utils/colors.js');
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('pnasa')
+		.setName('nasa')
 		.setDescription('Sends a nasa image of the day'),
 	async execute(interaction) {
 		await interaction.deferReply();

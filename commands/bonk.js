@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 const COLORS = require('../utils/colors.js');
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('pbonk')
+		.setName('bonk')
 		.setDescription('Bonk someone')
 		.addStringOption(option => option.setName('bonk').setDescription('Tag someone to bonk').setRequired(true)),
 	async execute(interaction) {
