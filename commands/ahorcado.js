@@ -1,12 +1,19 @@
 const { SlashCommandBuilder } = require('discord.js');
+const axios = require('axios');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ahorcado')
-		.setDescription('Juega al ahorcado interactuando solo con texto.'),
+		.setDescription('Juega al ahorcado con temas de anime interactuando solo con texto.'),
 	async execute(interaction) {
-		const palabras = ['javascript', 'discord', 'bot', 'programacion', 'computadora'];
-		const palabra = palabras[Math.floor(Math.random() * palabras.length)].toLowerCase();
+		// Obtener un anime aleatorio de la API de Jikan
+		const anime = await getRandomAnime();
+		if (!anime) {
+			return interaction.reply('❌ No pude obtener un anime para el juego. Inténtalo de nuevo más tarde.');
+		}
+		const palabra = anime.title.toLowerCase().replace(/[^a-z\s]/g, '');
+		const genero = anime.genres.map(g => g.name).join(', ') || 'Desconocido';
+		const año = anime.year || 'Desconocido';
 		let intentos = 6;
 		const progreso = '_ '.repeat(palabra.length).trim().split(' ');
 		const letrasUsadas = new Set();
@@ -15,8 +22,11 @@ module.exports = {
 			embeds: [
 				{
 					color: 0x5865f2,
-					title: '🎮 Ahorcado',
-					description: `Palabra: \`${progreso.join(' ')}\`\nIntentos restantes: ${intentos}\nLetras usadas: Ninguna\n\nEscribe una letra en el chat para jugar.`,
+					title: '🎮 Ahorcado (Anime)',
+					description: `Palabra: \`${progreso.join(' ')}\`\nIntentos restantes: ${intentos}\nLetras usadas: Ninguna\n\n**Pistas**:  
+                                    Género: \`${genero}\`  
+                                    Año: \`${año}\`  
+                                    Escribe una letra en el chat para jugar.`,
 				},
 			],
 		});
@@ -59,8 +69,10 @@ module.exports = {
 					embeds: [
 						{
 							color: 0x5865f2,
-							title: '🎮 Ahorcado',
-							description: `Palabra: \`${progreso.join(' ')}\`\nIntentos restantes: ${intentos}\nLetras usadas: ${Array.from(letrasUsadas).join(', ')}`,
+							title: '🎮 Ahorcado (Anime)',
+							description: `Palabra: \`${progreso.join(' ')}\`\nIntentos restantes: ${intentos}\nLetras usadas: ${Array.from(letrasUsadas).join(', ')}\n\n**Pistas**:  
+                                            Género: \`${genero}\`  
+                                            Año: \`${año}\``,
 						},
 					],
 				});
@@ -69,10 +81,10 @@ module.exports = {
 		messageCollector.on('end', (_, reason) => {
 			let finalMessage;
 			if (reason === 'win') {
-				finalMessage = `🎉 ¡Felicidades! Adivinaste la palabra: **${palabra}**`;
+				finalMessage = `🎉 ¡Felicidades! Adivinaste el anime: **${anime.title}**`;
 			}
 			else if (reason === 'lose') {
-				finalMessage = `💀 ¡Perdiste! La palabra era: **${palabra}**`;
+				finalMessage = `💀 ¡Perdiste! El anime era: **${anime.title}**`;
 			}
 			else {
 				finalMessage = '⏳ Tiempo agotado. Inténtalo de nuevo más tarde.';
@@ -81,7 +93,7 @@ module.exports = {
 				embeds: [
 					{
 						color: 0x5865f2,
-						title: '🎮 Ahorcado',
+						title: '🎮 Ahorcado (Anime)',
 						description: finalMessage,
 					},
 				],
@@ -89,3 +101,13 @@ module.exports = {
 		});
 	},
 };
+async function getRandomAnime() {
+	try {
+		const response = await axios.get('https://api.jikan.moe/v4/random/anime');
+		return response.data.data;
+	}
+	catch (error) {
+		console.error('Error al obtener el anime:', error);
+		return null;
+	}
+}
