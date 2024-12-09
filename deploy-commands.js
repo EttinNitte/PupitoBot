@@ -17,7 +17,7 @@ async function loadCommands() {
 				command.map(async cmd => {
 					let txt = await utils.translate(cmd.data.description, 'es');
 					txt = txt[0].split('\n');
-					console.log(txt[0]);
+					console.log(cmd.data.name);
 					cmd.data.setDescription(txt[0]);
 					return cmd.data.toJSON();
 				}),
@@ -27,7 +27,7 @@ async function loadCommands() {
 		else {
 			let txt = await utils.translate(command.data.description, 'es');
 			txt = txt[0].split('\n');
-			console.log(txt[0]);
+			console.log(command.data.name);
 			command.data.setDescription(txt[0]);
 			commands.push(command.data.toJSON());
 		}
@@ -42,7 +42,7 @@ async function loadCommands() {
 				command.map(async cmd => {
 					let txt = await utils.translate(cmd.data.description, 'es');
 					txt = txt[0].split('\n');
-					console.log(txt[0]);
+					console.log(cmd.data.name);
 					cmd.data.setDescription(txt[0]);
 					return cmd.data.toJSON();
 				}),
@@ -52,7 +52,7 @@ async function loadCommands() {
 		else {
 			let txt = await utils.translate(command.data.description, 'es');
 			txt = txt[0].split('\n');
-			console.log(txt[0]);
+			console.log(command.data.name);
 			command.data.setDescription(txt[0]);
 			commands.push(command.data.toJSON());
 		}

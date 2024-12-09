@@ -3,7 +3,8 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('
 const fetch = require('node-fetch');
 const utils = require('../utils/utils.js');
 const he = require('he');
-
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./bot_database.db');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('trivia')
@@ -11,7 +12,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		try {
-			// Fetch the trivia question
+			const userId = interaction.user.id;
 			const response = await fetch('https://opentdb.com/api.php?amount=1&difficulty=medium&type=multiple');
 			const data = await response.json();
 			if (data.response_code !== 0 || data.results.length === 0) {
@@ -58,12 +59,48 @@ module.exports = {
 			collector.on('collect', async i => {
 				const answerIndex = parseInt(i.customId.split('_')[1], 10);
 				const selectedAnswer = answers[answerIndex];
-				if (selectedAnswer === correct_answer) {
-					await i.reply({ content: '🎉 Correcto!', ephemeral: true });
-				}
-				else {
-					await i.reply({ content: `❌ Incorrecto la respuesta correcta era:  **${correct_answer}**.`, ephemeral: true });
-				}
+				db.get(
+					'SELECT * FROM TRIVIA WHERE user_id = ?',
+					[userId],
+					async (err, row) => {
+						if (err) return console.error(err);
+						if (selectedAnswer === correct_answer) {
+							const bonus = row ? row.streak * 5 : 0;
+							const newScore = (row ? row.score : 0) + 10 + bonus;
+							const newStreak = (row ? row.streak : 0) + 1;
+							if (row) {
+								db.run(
+									'UPDATE TRIVIA SET score = ?, streak = ? WHERE user_id = ?',
+									[newScore, newStreak, userId],
+								);
+							}
+							else {
+								db.run(
+									'INSERT INTO TRIVIA (user_id, score, streak) VALUES (?, ?, ?)',
+									[userId, 10, 1],
+								);
+							}
+							await i.reply({ content: '🎉 Correcto!', ephemeral: true });
+						}
+						else {
+							const penalty = row ? row.score - 5 : 0;
+							const newScore = Math.max(penalty, 0);
+							if (row) {
+								db.run(
+									'UPDATE TRIVIA SET score = ?, streak = 0 WHERE user_id = ?',
+									[newScore, userId],
+								);
+							}
+							else {
+								db.run(
+									'INSERT INTO TRIVIA (user_id, score, streak) VALUES (?, ?, ?)',
+									[userId, 0, 0],
+								);
+							}
+							await i.reply({ content: `❌ Incorrecto la respuesta correcta era:  **${correct_answer}**.`, ephemeral: true });
+						}
+					},
+				);
 				collector.stop();
 			});
 			collector.on('end', async collected => {

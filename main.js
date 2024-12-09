@@ -1,7 +1,7 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 const loadResource = require('./utils/loadResource.js');
-let client = new Client({ intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates ] });
+let client = new Client({ intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent ] });
 client.commands = new Collection();
 client = loadResource.importCommands(client);
 client = loadResource.importEvents(client);
