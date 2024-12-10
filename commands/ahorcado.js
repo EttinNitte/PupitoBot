@@ -6,16 +6,15 @@ module.exports = {
 		.setName('ahorcado')
 		.setDescription('Juega al ahorcado con temas de anime interactuando solo con texto.'),
 	async execute(interaction) {
-		// Obtener un anime aleatorio de la API de Jikan
 		const anime = await getRandomAnime();
 		if (!anime) {
 			return interaction.reply('❌ No pude obtener un anime para el juego. Inténtalo de nuevo más tarde.');
 		}
 		const palabra = anime.title.toLowerCase().replace(/[^a-z\s]/g, '');
 		const genero = anime.genres.map(g => g.name).join(', ') || 'Desconocido';
-		const año = anime.year || 'Desconocido';
+		const año = anime.aired.string || 'Desconocido';
 		let intentos = 6;
-		const progreso = '_ '.repeat(palabra.length).trim().split(' ');
+		const progreso = palabra.split('').map(char => (char === ' ' ? ' ' : '_'));
 		const letrasUsadas = new Set();
 		await interaction.deferReply();
 		await interaction.editReply({
@@ -24,9 +23,9 @@ module.exports = {
 					color: 0x5865f2,
 					title: '🎮 Ahorcado (Anime)',
 					description: `Palabra: \`${progreso.join(' ')}\`\nIntentos restantes: ${intentos}\nLetras usadas: Ninguna\n\n**Pistas**:  
-                                    Género: \`${genero}\`  
-                                    Año: \`${año}\`  
-                                    Escribe una letra en el chat para jugar.`,
+                    Género: \`${genero}\`  
+                    Año: \`${año}\`  
+                    Escribe una letra en el chat para jugar.`,
 				},
 			],
 		});
@@ -48,14 +47,14 @@ module.exports = {
 			}
 			await message.delete().catch(console.error);
 			letrasUsadas.add(letra);
-			if (palabra.includes(letra)) {
-				for (let i = 0; i < palabra.length; i++) {
-					if (palabra[i] === letra) {
-						progreso[i] = letra;
-					}
+			let acierto = false;
+			for (let i = 0; i < palabra.length; i++) {
+				if (palabra[i] === letra) {
+					progreso[i] = letra;
+					acierto = true;
 				}
 			}
-			else {
+			if (!acierto) {
 				intentos--;
 			}
 			if (progreso.join('') === palabra) {
@@ -71,13 +70,14 @@ module.exports = {
 							color: 0x5865f2,
 							title: '🎮 Ahorcado (Anime)',
 							description: `Palabra: \`${progreso.join(' ')}\`\nIntentos restantes: ${intentos}\nLetras usadas: ${Array.from(letrasUsadas).join(', ')}\n\n**Pistas**:  
-                                            Género: \`${genero}\`  
-                                            Año: \`${año}\``,
+                            Género: \`${genero}\`  
+                            Año: \`${año}\``,
 						},
 					],
 				});
 			}
 		});
+
 		messageCollector.on('end', (_, reason) => {
 			let finalMessage;
 			if (reason === 'win') {
@@ -87,7 +87,7 @@ module.exports = {
 				finalMessage = `💀 ¡Perdiste! El anime era: **${anime.title}**`;
 			}
 			else {
-				finalMessage = '⏳ Tiempo agotado. Inténtalo de nuevo más tarde.';
+				finalMessage = `⏳ Tiempo agotado. El anime era: **${anime.title}**`;
 			}
 			interaction.editReply({
 				embeds: [

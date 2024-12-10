@@ -14,10 +14,9 @@ const padoru = {
 		try {
 			const voiceChannel = interaction.member.voice.channel;
 			const voiceState = interaction.guild.members.me.voice;
-			let img = null;
+			const img = 'https://i.pinimg.com/originals/97/1e/56/971e5662264562e5bf7cb8b39ada5df4.gif';
 			let desc = 'padoru';
 			if (voiceChannel && !voiceState.channel) {
-				img = 'https://i.pinimg.com/originals/97/1e/56/971e5662264562e5bf7cb8b39ada5df4.gif';
 				play(interaction, 'https://www.youtube.com/watch?v=efdN69QscAg');
 			}
 			else {

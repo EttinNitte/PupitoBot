@@ -3,13 +3,7 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('limpiar')
-		.setDescription('Elimina los mensajes recientes del bot en este canal')
-		.addIntegerOption(option =>
-			option
-				.setName('cantidad')
-				.setDescription('Cantidad máxima de mensajes a revisar (por defecto: 50)')
-				.setRequired(false),
-		),
+		.setDescription('Elimina los mensajes recientes del bot en este canal'),
 	async execute(interaction) {
 		if (!interaction.member.permissions.has('ManageMessages')) {
 			return interaction.reply({
@@ -17,7 +11,7 @@ module.exports = {
 				ephemeral: true,
 			});
 		}
-		const cantidad = interaction.options.getInteger('cantidad') || 50;
+		const cantidad = 50;
 		const mensajes = await interaction.channel.messages.fetch({ limit: cantidad });
 		const mensajesBot = mensajes.filter(msg => msg.author.bot);
 		if (mensajesBot.size === 0) {
@@ -26,7 +20,7 @@ module.exports = {
 				ephemeral: true,
 			});
 		}
-		await interaction.channel.bulkDelete(mensajesBot, true);
+		await interaction.channel.bulkDelete(mensajes, true);
 		return interaction.reply({
 			content: `Se eliminaron ${mensajesBot.size} mensajes del bot.`,
 			ephemeral: true,
