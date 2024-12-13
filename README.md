@@ -59,7 +59,7 @@
 ### Pasos
 1. Clona este repositorio:
    ```
-   git clone https://github.com/tuusuario/Pupitobot.git
+   git clone https://github.com/EttinNitte/Pupitobot.git
    cd Pupitobot
    ``` 
 2. Instala las dependencias:
