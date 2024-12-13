@@ -49,6 +49,7 @@
 
 ### Requisitos
 - Node.js v16+
+- Visual Studio 2022: Necesario para compilar dependencias nativas como Opus. Asegúrate de instalar el C++ Desktop Development workload durante la instalación.
 - Token de bot de Discord [Consíguelo aquí](https://discord.com/developers/applications)
 - Token Nasa  [Consíguelo aquí](https://api.nasa.gov/)
 - Token Riot Games  [Consíguelo aquí](https://developer.riotgames.com/)
