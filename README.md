@@ -1,4 +1,4 @@
-# 🌟 PupitoBot - Tu Compañero de Discord Multifuncional 🚀
+# 🐻 PupitoBot - Tu Compañero de Discord Multifuncional 🐻
 
 [![Node.js](https://img.shields.io/badge/Node.js-v16%2B-green)](https://nodejs.org/) 
 [![Discord.js](https://img.shields.io/badge/Discord.js-v14-blue)](https://discord.js.org/) 
@@ -45,7 +45,7 @@
 
 ---
 
-## 🚀 Instalación y Configuración
+## 🐻 Instalación y Configuración
 
 ### Requisitos
 - Node.js v16+
