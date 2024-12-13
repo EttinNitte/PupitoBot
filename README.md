@@ -57,22 +57,22 @@
    git clone https://github.com/tuusuario/Pupitobot.git
    cd Pupitobot
 Instala las dependencias:
-bash
-Copiar código
-npm install
+ ```bash
+   npm install
 Configura el archivo .env con tu token de bot:
-makefile
-Copiar código
-TOKEN=tu_token_aquí
+```bash
+   makefile
+   TOKEN=tu_token_aquí
 Inicia el bot:
-bash
-Copiar código
-npm start
+```bash
+   Copiar código
+   npm start
 🛠 Tecnologías Usadas
 Node.js: Backend del bot.
 Discord.js v14: Interfaz con la API de Discord.
 SQLite3: Base de datos para el sistema de trivia y otras funciones.
 APIs Externas: Integración con la API de NASA, Steam y más.
+
 📝 Contribuciones
 ¡Las contribuciones son bienvenidas! Si tienes ideas para nuevos comandos o mejoras, abre un Issue o envía un Pull Request.
 
