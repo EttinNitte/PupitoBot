@@ -54,8 +54,8 @@
 ### Pasos
 1. Clona este repositorio:
    ```bash
-   git clone https://github.com/tuusuario/nombre-del-repo.git
-   cd nombre-del-repo
+   git clone https://github.com/tuusuario/Pupitobot.git
+   cd Pupitobot
 Instala las dependencias:
 bash
 Copiar código
